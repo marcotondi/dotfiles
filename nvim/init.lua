@@ -105,7 +105,6 @@ vim.api.nvim_create_autocmd('FileType', {
   command = 'nnoremap <buffer> q <cmd>quit<cr>'
 })
 
-
 -- ========================================================================== --
 -- ==                               PLUGINS                                == --
 -- ========================================================================== --
@@ -132,7 +131,7 @@ function lazy.setup(plugins)
   end
 
   -- You can "comment out" the line below after lazy.nvim is installed
-  lazy.install(lazy.path)
+  -- lazy.install(lazy.path)
 
   vim.opt.rtp:prepend(lazy.path)
 
@@ -214,6 +213,8 @@ require('nvim-tree').setup({
 })
 
 vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<cr>')
+-- Apri il file explorer all'avvio
+vim.cmd('NvimTreeOpen')
 
 ---
 --- telescope
