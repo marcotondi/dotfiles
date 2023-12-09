@@ -36,8 +36,8 @@ I drew inspiration from the following sources:
 
 ## ToDo
 
-- [ ]  script init.ps1
-- [ ]  script winget.ps1
+- [ ]  script init.ps1 - to finish the configuration
+- [ ]  script winget.ps1 - to finish the configuration
 
 ## Contact
 
