@@ -15,7 +15,7 @@ In continuous work...
 1. Clone the Repository:
 
     ```bash
-    git clone https://github.com/marcotondi/.dotfiles.git
+    git clone https://github.com/marcotondi/dotfiles.git
     ```
 
 2. Run Configuration Scripts
