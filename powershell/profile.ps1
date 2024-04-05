@@ -26,6 +26,7 @@ Set-Alias g git
 Set-Alias grep findstr
 Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
+Set-Alias k 'kubectl'
 
 # Utilities
 function which ($command) {
