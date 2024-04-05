@@ -33,6 +33,8 @@ vim.opt.mouse = 'a'
 vim.opt.smartcase = true
 vim.opt.hlsearch = false
 
+vim.opt.guifont = "RobotoMono Nerd Font"
+
 -- ========================================================================== --
 -- ==                             KEYBINDINGS                              == --
 -- ========================================================================== --
@@ -234,3 +236,4 @@ require('toggleterm').setup({
   direction = 'horizontal',
   shade_terminals = true
 })
+
