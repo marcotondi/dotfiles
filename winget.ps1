@@ -54,3 +54,5 @@ winget install -e WinFsp.WinFsp;
 winget install -e Python.Python.3.11;
 winget install -e JanDeDobbeleer.OhMyPosh -s winget
 winget install fzf
+winget install fastfetch
+winget install -e --id AltSnap.AltSnap

@@ -21,3 +21,8 @@ New-Item -ItemType symboliclink -Path "$env:USERPROFILE" -Name ".gitconfig" -Val
 mkdir $env:USERPROFILE\AppData\Local\nvim
 New-Item -ItemType symboliclink -Path "$env:USERPROFILE\AppData\Local\nvim" -Name "init.lua" -Value "$env:USERPROFILE\$dir_dotfile\nvim\init.lua"
 
+# AltSnap
+New-Item -ItemType symboliclink -Path "$env:USERPROFILEE\AppData\Roaming\AltSnap\AltSnap.ini" -Target (Resolve-Path "$env:USERPROFILE\$dir_dotfiles\altsnap\AltSnap.ini") -Force | Out-Null
+
+# fastfetch
+New-Item -ItemType symboliclink -Path "$env:USERPROFILEE\AppData\Local\fastfetch" -Target (Resolve-Path "$env:USERPROFILE\$dir_dotfiles\fastfetch") -Force | Out-Null

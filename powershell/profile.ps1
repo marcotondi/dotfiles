@@ -13,8 +13,8 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteChar
 Set-PSReadLineOption -PredictionSource History
 
 # Fzf
- Import-Module PSFzf
- Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
+Import-Module PSFzf
+Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
 
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
@@ -35,3 +35,5 @@ function which ($command) {
 }
 
 Write-Host "User Profile Loaded!"
+
+fastfetch
