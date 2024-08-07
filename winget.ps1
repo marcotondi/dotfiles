@@ -56,3 +56,4 @@ winget install -e JanDeDobbeleer.OhMyPosh -s winget
 winget install fzf
 winget install fastfetch
 winget install -e --id AltSnap.AltSnap
+winget install sharkdp.bat
