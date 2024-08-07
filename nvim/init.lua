@@ -148,14 +148,14 @@ lazy.setup({
   {'folke/tokyonight.nvim'},
   {'kyazdani42/nvim-web-devicons'},
   {'nvim-lualine/lualine.nvim'},
-  
+
 	-- File Explorer
 	{'nvim-tree/nvim-tree.lua'},
- 
+
 	-- Fuzzy finder
   {'nvim-telescope/telescope.nvim', branch = '0.1.x'},
   -- {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
-	
+
 	-- Utilities
   -- {'moll/vim-bbye'},
   {'nvim-lua/plenary.nvim'}, -- dependency telescope
@@ -216,7 +216,7 @@ require('nvim-tree').setup({
 
 vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<cr>')
 -- Apri il file explorer all'avvio
-vim.cmd('NvimTreeOpen')
+-- vim.cmd('NvimTreeOpen')
 
 ---
 --- telescope
