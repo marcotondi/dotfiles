@@ -33,8 +33,22 @@ Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 Set-Alias k 'kubectl'
 Set-Alias cat 'bat-np'
+Set-Alias -Name touch -Value 'touch-fun'
 
-# Utilities
+# Function Utilities
+function touch-fun {
+    param (
+        [string]$Path
+    )
+    if (-not (Test-Path -Path $Path)) {
+        # Se il file non esiste, viene creato
+        New-Item -ItemType File -Path $Path | Out-Null
+    } else {
+        # Se il file esiste, aggiorna il timestamp
+        (Get-Item -Path $Path).LastWriteTime = Get-Date
+    }
+}
+
 function bat-np {
     bat --paging=never $args
 }
@@ -50,13 +64,16 @@ function mkcd {
 	cd $directory
 }
 
-function reload {
+function rs {
     clear
 	& $profile
 }
 
 # Start fastfetch
 fastfetch
+
+# Start NODE JS
+fnm env --use-on-cd --shell power-shell | Out-String | Invoke-Expression
 
 Write-Host "            ╔╗───────────────────────╔╗"        -ForegroundColor Yellow
 Write-Host "            ║║───────────────────────║║"        -ForegroundColor Yellow

@@ -41,12 +41,12 @@
             --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)[%an]%Creset' \
             --abbrev-commit
   rm  = remote -v
-  
+
   d = diff
   co = checkout
   ci = commit
   ca = commit -a
-  st = status
+  st = status -sb
   br = branch
   ba = branch -a
   bm = branch --merged
@@ -61,7 +61,7 @@
   edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
   # add conflicted file on merge
   add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
-  
+
 [hub]
   protocol = https
 
@@ -69,7 +69,7 @@
   tool = nvimdiff
 [difftool "nvimdiff"]
 	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [mergetool "nvimdiff"]
 	cmd = nvim -d \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
