@@ -2,12 +2,13 @@
 ### Init .DotFile Configurations                                              #
 ###############################################################################
 # Set Variable
-$dir_dotfiles = ".\.dotfiles"
+$dir_dotfiles = ".\.dotfile"
 
 # INSTALL MODULE
 Install-Module -Name posh-git -Scope CurrentUser -Force
 Install-Module -Name PSFzf -Scope CurrentUser -Force
 Install-Module -Name Terminal-Icons -Scope CurrentUser -Force
+Install-Module -Name PSWindowsUpdate -Force
 
 # SymbolicLink # HardLink
 # PowerShell profile
