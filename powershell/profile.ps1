@@ -2,7 +2,7 @@
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 
 Import-Module posh-git
-$omp_config = Join-Path $PSScriptRoot ".\takuya.omp.json"
+$omp_config = Join-Path $PSScriptRoot ".\amro.omp.json"
 oh-my-posh --init --shell pwsh --config $omp_config | Invoke-Expression
 Import-Module -Name Terminal-Icons
 
@@ -75,12 +75,7 @@ fastfetch
 # Start NODE JS
 fnm env --use-on-cd --shell power-shell | Out-String | Invoke-Expression
 
-Write-Host "            ╔╗───────────────────────╔╗"        -ForegroundColor Yellow
-Write-Host "            ║║───────────────────────║║"        -ForegroundColor Yellow
-Write-Host "            ║╚═╦══╦══╦══╦╗─╔╗╔══╦══╦═╝╠╦═╗╔══╗" -ForegroundColor Yellow
-Write-Host "            ║╔╗║╔╗║╔╗║╔╗║║─║║║╔═╣╔╗║╔╗╠╣╔╗╣╔╗║" -ForegroundColor Yellow
-Write-Host "            ║║║║╔╗║╚╝║╚╝║╚═╝║║╚═╣╚╝║╚╝║║║║║╚╝║" -ForegroundColor Yellow
-Write-Host "            ╚╝╚╩╝╚╣╔═╣╔═╩═╗╔╝╚══╩══╩══╩╩╝╚╩═╗║" -ForegroundColor Yellow
-Write-Host "            ──────║║─║║─╔═╝║──────────────╔═╝║" -ForegroundColor Yellow
-Write-Host "            ──────╚╝─╚╝─╚══╝──────────────╚══╝" -ForegroundColor Yellow
+Write-Host "░█░█░█▀█░█▀█░█▀█░█░█░░░█▀▀░█▀█░█▀▄░▀█▀░█▀█░█▀▀" -ForegroundColor Yellow
+Write-Host "░█▀█░█▀█░█▀▀░█▀▀░░█░░░░█░░░█░█░█░█░░█░░█░█░█░█" -ForegroundColor Yellow
+Write-Host "░▀░▀░▀░▀░▀░░░▀░░░░▀░░░░▀▀▀░▀▀▀░▀▀░░▀▀▀░▀░▀░▀▀▀" -ForegroundColor Yellow
 Write-Host

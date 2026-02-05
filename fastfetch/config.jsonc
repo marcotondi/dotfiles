@@ -1,12 +1,7 @@
 {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
     "logo": {
-        "source": "ascii.txt",
-        "type": "file",
-        "padding": {
-            "top": 1,
-            "left": 3
-        }
+        "type": "none"
     },
     "display": {
         "separator": "",
@@ -15,7 +10,7 @@
         },
         "color": {
             "keys": "white",
-            "title": "cyan"
+            "title": "#45F1C2"
         }
     },
     "modules": [
@@ -24,22 +19,13 @@
             "type": "custom"
         },
         {
-            "key": "│           │\u001b[11D{#36} user",
+            "key": "│           │\u001b[11D{##45F1C2} user",
             "type": "title"
-        },
-        {
-            "key": "│           │\u001b[11D{#31}󰅐 uptime",
-            "type": "uptime"
         },
         {
             "key": "│           │\u001b[11D{#39} OS",
             "type": "os",
             "format": "{4} {6}"
-        },
-        {
-            "key": "│           │\u001b[11D{#32} term",
-            "type": "terminal",
-            "format": "{5}"
         },
         {
             "key": "│           │\u001b[11D{#33} shell",

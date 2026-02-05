@@ -22,7 +22,7 @@ winget install -e GnuPG.Gpg4win;
 winget install -e Python.Launcher;
 winget install -e Mobatek.MobaXterm;
 winget install -e WinFsp.WinFsp;
-winget install -e AltSnap.AltSnap;
+# winget install -e AltSnap.AltSnap;
 winget install -e dbeaver.dbeaver;
 winget install -e Fastfetch-cli.Fastfetch;
 winget install -e GIMP.GIMP;
