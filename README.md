@@ -1,46 +1,34 @@
 # .dotfiles
 
-This repository contains my dotfiles configuration for Windows.
-In continuous work...
+Personal Windows dotfiles — Neovim, Git, PowerShell, and fastfetch configurations managed via symlinks.
+
+## Quick Start
+
+```powershell
+git clone https://github.com/marcotondi/dotfiles.git ~/.dotfile
+cd ~/.dotfile
+.\init.ps1
+```
+
+Restart your terminal to pick up the new profile.
 
 ## Contents
 
-- **Neovim Configuration**: Configurations for Neovim, including plugins, themes, and custom shortcuts.
-- **Git Configuration**: Custom configurations for Git, including aliases and color options.
-- **PowerShell Profile**: PowerShell profile file that loads modules, customizes the prompt, and provides useful aliases and functions.
-- **Uninstall Scripts**: PowerShell scripts to facilitate the uninstallation of specific Windows modules.
+| Directory/File | Description |
+|---|---|
+| `init.ps1` | Bootstrap — installs modules and creates symlinks (idempotent) |
+| `uninstall.ps1` | Removes all symlinks created by `init.ps1` |
+| `modules/` | Modular setup scripts (powershell, git, nvim, fastfetch) |
+| `windows/` | `app.json` (winget export), `winget.ps1` (import + optional debloat), `debloat.ps1` (remove bloatware) |
+| `powershell/` | PowerShell profile + oh-my-posh themes |
+| `nvim/init.lua` | Neovim config (lazy.nvim, LSP, cmp, treesitter) |
+| `.gitconfig` | Git aliases, editor, diff/merge tooling |
+| `fastfetch/` | System info display config |
 
-## Instructions
+## Uninstall
 
-1. Clone the Repository:
+```powershell
+.\uninstall.ps1
+```
 
-    ```bash
-    git clone https://github.com/marcotondi/dotfiles.git
-    ```
-
-2. Run Configuration Scripts
-    ```bash
-    ./init.ps1
-    ```
-3. Restart PowerShell or the Terminal
-
-## Notes
-
-- Customize configurations according to your needs by editing the appropriate files.
-- Ensure you have the necessary privileges to run uninstall scripts.
-
-I drew inspiration from the following sources:
-
-- [https://github.com/craftzdog/dotfiles-public](https://github.com/craftzdog/dotfiles-public)
-- [https://github.com/jayharris/dotfiles-windows](https://github.com/jayharris/dotfiles-windows).
-
-## ToDo
-
-- [ ]  script init.ps1 - to finish the configuration
-- [ ]  script winget.ps1 - to finish the configuration
-
-## Contact
-
-For questions or suggestions, contact me.
-Happy hacking! 🚀
-
+Inspiration: [craftzdog/dotfiles-public](https://github.com/craftzdog/dotfiles-public), [jayharris/dotfiles-windows](https://github.com/jayharris/dotfiles-windows)

@@ -1,30 +1,37 @@
 ###############################################################################
 ### Init .DotFile Configurations                                              #
 ###############################################################################
-# Set Variable
-$dir_dotfiles = ".\.dotfile"
 
-# INSTALL MODULE
-Install-Module -Name posh-git -Scope CurrentUser -Force
-Install-Module -Name PSFzf -Scope CurrentUser -Force
-Install-Module -Name Terminal-Icons -Scope CurrentUser -Force
-Install-Module -Name PSWindowsUpdate -Force
+$dotfilesRoot = $PSScriptRoot
 
-# SymbolicLink # HardLink
-# PowerShell profile
-new-item -itemtype symboliclink -path "$env:USERPROFILE\Documents\PowerShell" -name Microsoft.PowerShell_profile.ps1 -value "$env:USERPROFILE\$dir_dotfiles\powershell\profile.ps1"
-new-item -itemtype symboliclink -path "$env:USERPROFILE\Documents\PowerShell" -name takuya.omp.json -value "$env:USERPROFILE\$dir_dotfiles\powershell\takuya.omp.json"
-new-item -itemtype symboliclink -path "$env:USERPROFILE\Documents\PowerShell" -name amro.omp.json -value "$env:USERPROFILE\$dir_dotfiles\powershell\amro.omp.json"
+function Write-Step {
+    param([string]$Message, [string]$Color = "Green")
+    Write-Host ">>> $Message" -ForegroundColor $Color
+}
 
-# .gitconifg
-New-Item -ItemType symboliclink -Path "$env:USERPROFILE" -Name ".gitconfig" -Value "$env:USERPROFILE\.$dir_dotfile\.gitconfig"
+function Install-ModuleIfMissing {
+    param([string]$Name)
+    if (-not (Get-Module -ListAvailable -Name $Name)) {
+        Write-Step "Installing module: $Name" "Yellow"
+        Install-Module -Name $Name -Scope CurrentUser -Force -SkipPublisherCheck
+    } else {
+        Write-Step "Module already installed: $Name" "Cyan"
+    }
+}
 
-# NeoVim
-mkdir $env:USERPROFILE\AppData\Local\nvim
-New-Item -ItemType symboliclink -Path "$env:USERPROFILE\AppData\Local\nvim" -Name "init.lua" -Value "$env:USERPROFILE\$dir_dotfile\nvim\init.lua"
+# --- Install PowerShell Modules ---
+Write-Step "Installing PowerShell modules..." "Yellow"
+Install-ModuleIfMissing "posh-git"
+Install-ModuleIfMissing "PSFzf"
+Install-ModuleIfMissing "Terminal-Icons"
+Install-ModuleIfMissing "PSWindowsUpdate"
 
-# AltSnap
-#New-Item -ItemType symboliclink -Path "$env:USERPROFILE\AppData\Roaming\AltSnap\AltSnap.ini" -Target (Resolve-Path "$env:USERPROFILE\$dir_dotfiles\altsnap\AltSnap.ini") -Force | Out-Null
+# --- Create Symbolic Links ---
+Write-Step "Creating symbolic links..." "Yellow"
 
-# fastfetch
-New-Item -ItemType symboliclink -Path "$env:USERPROFILE\AppData\Local\fastfetch" -Target (Resolve-Path "$env:USERPROFILE\$dir_dotfiles\fastfetch") -Force | Out-Null
+. "$dotfilesRoot\modules\powershell.ps1" -DotfilesRoot $dotfilesRoot
+. "$dotfilesRoot\modules\git.ps1" -DotfilesRoot $dotfilesRoot
+. "$dotfilesRoot\modules\nvim.ps1" -DotfilesRoot $dotfilesRoot
+. "$dotfilesRoot\modules\fastfetch.ps1" -DotfilesRoot $dotfilesRoot
+
+Write-Step "Done! Restart your terminal to apply changes." "Green"

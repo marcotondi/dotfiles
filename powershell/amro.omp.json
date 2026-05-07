@@ -4,10 +4,16 @@
     {
       "alignment": "left",
       "segments": [
+      {
+          "foreground": "p:os",
+          "style": "plain",
+          "template": "{{.Icon}} ",
+          "type": "os"
+        },
         {
           "foreground": "#45F1C2",
           "style": "plain",
-          "template": "\ueb99 {{ .UserName }} |",
+          "template": "{{ .UserName }} |",
           "type": "session"
         },
         {
@@ -21,7 +27,7 @@
           "type": "path"
         },
         {
-          "foreground": "#14A5AE",
+          "foreground": "#eaff00",
           "powerline_symbol": "\ue0b0",
           "properties": {
             "fetch_upstream_icon": true

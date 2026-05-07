@@ -6,6 +6,7 @@ vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
 
 vim.opt.number = true
+vim.opt.relativenumber = true
 vim.opt.title = true
 vim.opt.autoindent = true
 vim.opt.smartindent = true
@@ -39,47 +40,33 @@ vim.opt.guifont = "RobotoMono Nerd Font"
 -- ==                             KEYBINDINGS                              == --
 -- ========================================================================== --
 
--- Space as leader key
+local km_opts = { noremap = true, silent = true }
+
 vim.g.mapleader = ' '
 
--- Shortcuts
-vim.keymap.set({'n', 'x', 'o'}, '<leader>h', '^')
-vim.keymap.set({'n', 'x', 'o'}, '<leader>l', 'g_')
+vim.keymap.set({ 'n', 'x', 'o' }, '<leader>h', '^')
+vim.keymap.set({ 'n', 'x', 'o' }, '<leader>l', 'g_')
 vim.keymap.set('n', '<leader>a', ':keepjumps normal! ggVG<cr>')
+vim.keymap.set('n', '<C-a>', 'gg<S-v>G')
+vim.keymap.set('n', '<C-m>', '<C-i>', km_opts)
 
--- Select all
-vim.keymap.set("n", "<C-a>", "gg<S-v>G")
--- Jumplist
-vim.keymap.set("n", "<C-m>", "<C-i>", opts)
-
--- New tab
-vim.keymap.set("n", "te", ":tabedit")
-vim.keymap.set("n", "<tab>", ":tabnext<Return>", opts)
-vim.keymap.set("n", "<s-tab>", ":tabprev<Return>", opts)
--- Split window
-vim.keymap.set("n", "ss", ":split<Return>", opts)
-vim.keymap.set("n", "sv", ":vsplit<Return>", opts)
--- Move window
-vim.keymap.set("n", "sh", "<C-w>h")
-vim.keymap.set("n", "sk", "<C-w>k")
-vim.keymap.set("n", "sj", "<C-w>j")
-vim.keymap.set("n", "sl", "<C-w>l")
-
--- Resize window
-vim.keymap.set("n", "<C-w><left>", "<C-w><")
-vim.keymap.set("n", "<C-w><right>", "<C-w>>")
-vim.keymap.set("n", "<C-w><up>", "<C-w>+")
-vim.keymap.set("n", "<C-w><down>", "<C-w>-")
-
--- Basic clipboard interaction
-vim.keymap.set({'n', 'x'}, 'gy', '"+y') -- copy
-vim.keymap.set({'n', 'x'}, 'gp', '"+p') -- paste
-
--- Delete text
-vim.keymap.set({'n', 'x'}, 'x', '"_x')
-vim.keymap.set({'n', 'x'}, 'X', '"_d')
-
--- Commands
+vim.keymap.set('n', 'te', ':tabedit')
+vim.keymap.set('n', '<tab>', ':tabnext<Return>', km_opts)
+vim.keymap.set('n', '<s-tab>', ':tabprev<Return>', km_opts)
+vim.keymap.set('n', 'ss', ':split<Return>', km_opts)
+vim.keymap.set('n', 'sv', ':vsplit<Return>', km_opts)
+vim.keymap.set('n', 'sh', '<C-w>h')
+vim.keymap.set('n', 'sk', '<C-w>k')
+vim.keymap.set('n', 'sj', '<C-w>j')
+vim.keymap.set('n', 'sl', '<C-w>l')
+vim.keymap.set('n', '<C-w><left>', '<C-w><')
+vim.keymap.set('n', '<C-w><right>', '<C-w>>')
+vim.keymap.set('n', '<C-w><up>', '<C-w>+')
+vim.keymap.set('n', '<C-w><down>', '<C-w>-')
+vim.keymap.set({ 'n', 'x' }, 'gy', '"+y')
+vim.keymap.set({ 'n', 'x' }, 'gp', '"+p')
+vim.keymap.set({ 'n', 'x' }, 'x', '"_x')
+vim.keymap.set({ 'n', 'x' }, 'X', '"_d')
 vim.keymap.set('n', '<leader>w', '<cmd>write<cr>')
 vim.keymap.set('n', '<leader>bq', '<cmd>bdelete<cr>')
 vim.keymap.set('n', '<leader>bl', '<cmd>buffer #<cr>')
@@ -132,8 +119,7 @@ function lazy.setup(plugins)
     return
   end
 
-  -- You can "comment out" the line below after lazy.nvim is installed
-  -- lazy.install(lazy.path)
+  lazy.install(lazy.path)
 
   vim.opt.rtp:prepend(lazy.path)
 
@@ -145,22 +131,47 @@ lazy.path = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 lazy.opts = {}
 
 lazy.setup({
+  -- Theme
   {'folke/tokyonight.nvim'},
-  {'kyazdani42/nvim-web-devicons'},
+
+  -- Icons
+  {'nvim-tree/nvim-web-devicons'},
+
+  -- Statusline
   {'nvim-lualine/lualine.nvim'},
 
-	-- File Explorer
-	{'nvim-tree/nvim-tree.lua'},
+  -- File Explorer
+  {'nvim-tree/nvim-tree.lua'},
 
-	-- Fuzzy finder
+  -- Fuzzy finder
   {'nvim-telescope/telescope.nvim', branch = '0.1.x'},
-  -- {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
 
-	-- Utilities
-  -- {'moll/vim-bbye'},
-  {'nvim-lua/plenary.nvim'}, -- dependency telescope
+  -- Terminal
   {'akinsho/toggleterm.nvim'},
+
+  -- Editorconfig
   {'editorconfig/editorconfig-vim'},
+
+  -- LSP
+  {
+    'williamboman/mason.nvim',
+    config = function()
+        require('mason').setup()
+        -- Aggiorna il registry solo se mason è già inizializzato
+        pcall(vim.cmd, 'MasonUpdate')
+    end,
+  },
+  {'williamboman/mason-lspconfig.nvim'},
+  {'neovim/nvim-lspconfig'},
+
+  -- Autocomplete
+  {'hrsh7th/nvim-cmp'},
+  {'hrsh7th/cmp-nvim-lsp'},
+  {'hrsh7th/cmp-buffer'},
+  {'hrsh7th/cmp-path'},
+  {'L3MON4D3/LuaSnip'},
+  {'saadparwaiz1/cmp_luasnip'},
+
 })
 
 
@@ -208,8 +219,8 @@ require('nvim-tree').setup({
 
     bufmap('L', api.node.open.edit, 'Expand folder or go to file')
     bufmap('v', api.node.open.vertical, 'Open: Vertical Split')
-		bufmap('a', api.fs.create, 'Create file or Directory')
-		bufmap('H', api.node.navigate.parent_close, 'Close parent folder')
+    bufmap('a', api.fs.create, 'Create file or Directory')
+    bufmap('H', api.node.navigate.parent_close, 'Close parent folder')
     bufmap('gh', api.tree.toggle_hidden_filter, 'Toggle hidden files')
   end
 })
@@ -237,3 +248,75 @@ require('toggleterm').setup({
   shade_terminals = true
 })
 
+---
+-- Mason (LSP installer)
+---
+require('mason').setup()
+require('mason-lspconfig').setup({
+  ensure_installed = {},
+  automatic_installation = false,
+})
+
+---
+-- nvim-lspconfig
+---
+local on_attach = function(client, bufnr)
+  local bufopts = { noremap = true, silent = true, buffer = bufnr }
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+  vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+  vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+  vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
+  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+  vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+end
+
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+-- Configurazione globale: si applica a tutti i server abilitati
+vim.lsp.config('*', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+-- Abilita i server (sostituisce il loop lspconfig[lsp].setup)
+vim.lsp.enable({ 'lua_ls', 'pyright', 'ts_ls', 'gopls', 'rust_analyzer' })
+
+---
+-- nvim-cmp (autocomplete)
+---
+local cmp = require('cmp')
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif require('luasnip').expand_or_jumpable() then
+        require('luasnip').expand_or_jump()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+    { name = 'buffer' },
+    { name = 'path' },
+  }),
+})

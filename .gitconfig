@@ -3,77 +3,133 @@
 #
 
 [core]
-  excludesfile = ~/.gitignore
-  editor = nvim
-  ignorecase = false
-[help]
-  # Automatically correct and execute mistyped commands after waiting for the given number of deciseconds (0.1 sec).
-  autocorrect = 30
-  # Override the default help format used by `git help`.
-  format = man
- [push]
-  # Push should only push current branch, not all branches.
-  default = current
-  # Enable `--follow-tags` option by default.
-  followTags = true
-[pull]
-  rebase = false
-[column]
-  ui = never
+    excludesfile = ~/.gitignore
+    editor = nvim
+    autocrlf = false
+    eol = lf
+    ignorecase = false
+    quotePath = false
+
 [color]
-  status = auto
-  diff = auto
-  branch = auto
-  interactive = auto
-  grep = auto
-  ui = auto
-[filter "lfs"]
-  clean    = git-lfs clean -- %f
-  smudge   = git-lfs smudge -- %f
-  process  = git-lfs filter-process
-  required = true
+    ui = auto
+    status = auto
+    branch = auto
+    diff = auto
+    interactive = auto
+    grep = auto
 
-[alias]
-  td = log --since=midnight --color --graph \
-            --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)[%an]%Creset' \
-            --abbrev-commit
-  yd = log --since yesterday --until=midnight --color --graph \
-            --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)[%an]%Creset' \
-            --abbrev-commit
-  rm  = remote -v
+[column]
+    ui = never
 
-  d = diff
-  co = checkout
-  ci = commit
-  ca = commit -a
-  st = status -sb
-  br = branch
-  ba = branch -a
-  bm = branch --merged
- bn = branch --no-merged
-  hist = log --pretty=format:\"%Cgreen%h %Creset%cd %Cblue[%cn] %Creset%s%C(yellow)%d%C(reset)\" --graph --date=relative --decorate --all
-  llog = log --graph --name-status --pretty=format:\"%C(red)%h %C(reset)(%cd) %C(green)%an %Creset%s %C(yellow)%d%Creset\" --date=relative
-  open = "!hub browse"
-  type = cat-file -t
-  dump = cat-file -p
-  find = "!f() { git log --pretty=format:\"%h %cd [%cn] %s%d\" --date=relative -S'pretty' -S\"$@\" | peco | awk '{print $1}' | xargs -I {} git diff {}^ {}; }; f"
-  # edit conflicted file on merge
-  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
-  # add conflicted file on merge
-  add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+[help]
+    autocorrect = 30
+    format = man
 
-[hub]
-  protocol = https
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+    ff = only
+
+[push]
+    default = current
+    followTags = true
+
+[fetch]
+    prune = true
+
+[rebase]
+    autostash = true
 
 [diff]
-  tool = nvimdiff
+    tool = nvimdiff
+    colorMoved = default
+
 [difftool "nvimdiff"]
-	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
-	path =
+    cmd = nvim -d "$LOCAL" "$REMOTE"
+
+[merge]
+    tool = nvimdiff
+    conflictstyle = zdiff3
+
 [mergetool "nvimdiff"]
-	cmd = nvim -d \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+    cmd = nvim -d "$LOCAL" "$REMOTE" -ancestor "$BASE" -merge "$MERGED"
+    trustExitCode = true
+
+[filter "lfs"]
+    clean    = git-lfs clean -- %f
+    smudge   = git-lfs smudge -- %f
+    process  = git-lfs filter-process
+    required = true
+
+[alias]
+    ## --- Modern core ---
+    sw = switch
+    rs = restore
+    rst = restore --staged
+    st = status -sb
+
+    ## --- Branch ---
+    br = branch
+    ba = branch -a
+    bm = branch --merged
+    bn = branch --no-merged
+    bclean = "!git branch --merged | egrep -v '\\*|main|master|develop|dev' | xargs -n 1 git branch -d"
+
+    ## --- Commit ---
+    ci = commit
+    ca = commit -a
+    amend = commit --amend --no-edit
+
+    ## --- Rebase ---
+    rc = rebase --continue
+    ra = rebase --abort
+    rski = rebase --skip
+
+    ## --- Diff ---
+    d = diff
+    ds = diff --staged
+
+    ## --- Logs ---
+    lg = log --oneline --decorate --graph --color
+
+    td = log --since=midnight --color --graph \
+        --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)[%an]%Creset'
+
+    yd = log --since=yesterday --until=midnight --color --graph \
+        --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)[%an]%Creset'
+
+    hist = log --pretty=format:'%Cgreen%h %Creset%cd %Cblue[%cn] %Creset%s %C(yellow)%d%Creset' \
+            --graph --date=relative --decorate --all
+
+    ## --- fzf-powered commit finder ---
+    find = "!f() { \
+        git log --pretty=format:'%h %ad %an %s' --date=short \
+        | fzf --ansi --no-sort --reverse \
+        | awk '{print $1}' \
+        | xargs -I {} git diff {}^ {}; \
+    }; f"
+
+    ## --- File conflict helpers ---
+    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; nvim `f`"
+    add-unmerged  = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+
+    ## --- Git object introspection ---
+    type = cat-file -t
+    dump = cat-file -p
+
+    ## --- Detached HEAD (unico caso rimasto) ---
+    co = checkout
 
 [user]
-  name = Marco Tondi
-  email = marco.tondi@exprivia.com
+    name = Marco Tondi
+    email = marco.tondi@exprivia.com
+
+# identità personale ai repository privati
+[includeIf "gitdir:C:/dev/personal/"]
+    path = ~/.gitconfig-personal
+
+
+[credential "https://bitbucket.springlab.enel.com"]
+    provider = bitbucket

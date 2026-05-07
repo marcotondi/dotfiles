@@ -1,19 +1,17 @@
 # set PowerShell to UTF-8
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 
+# Prompt (oh-my-posh)
 Import-Module posh-git
-$omp_config = Join-Path $PSScriptRoot ".\amro.omp.json"
+$omp_config = Join-Path $PSScriptRoot "amro.omp.json"
 oh-my-posh --init --shell pwsh --config $omp_config | Invoke-Expression
+
+# Terminal icons
 Import-Module -Name Terminal-Icons
 
 # PSReadLine
-# Set-PSReadLineOption -EditMode Emacs
-# Set-PSReadLineOption -BellStyle None
-# Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteChar
 Set-PSReadLineOption -PredictionSource History
-# menu complete using TAB instead of CTRL+SPACE
 Set-PSReadlineKeyHandler -Chord Tab -Function MenuComplete
-# up&down arrow for history search
 Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 
@@ -22,60 +20,58 @@ Import-Module PSFzf
 Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
 
 # Env
-$env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
+$env:GIT_SSH = "$env:SystemRoot\system32\OpenSSH\ssh.exe"
 
-# Alias
+# Aliases
 Set-Alias -Name vim -Value nvim
 Set-Alias ll ls
 Set-Alias g git
 Set-Alias grep findstr
-Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
-Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
-Set-Alias k 'kubectl'
-Set-Alias cat 'bat-np'
-Set-Alias -Name touch -Value 'touch-fun'
+Set-Alias k kubectl
+Set-Alias -Name touch -Value 'Update-File'
+Set-Alias cat Get-BatNp
 
-# Function Utilities
-function touch-fun {
-    param (
-        [string]$Path
-    )
+# Functions
+function Get-BatNp {
+    bat --paging=never $args
+}
+
+function Update-File {
+    param ([string]$Path)
     if (-not (Test-Path -Path $Path)) {
-        # Se il file non esiste, viene creato
         New-Item -ItemType File -Path $Path | Out-Null
     } else {
-        # Se il file esiste, aggiorna il timestamp
         (Get-Item -Path $Path).LastWriteTime = Get-Date
     }
 }
 
-function bat-np {
-    bat --paging=never $args
-}
-
 function which ($command) {
-  Get-Command -Name $command -ErrorAction SilentlyContinue |
-    Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
+    Get-Command -Name $command -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 
 function mkcd {
-	Param($directory)
-	mkdir -p $directory
-	cd $directory
+    param($directory)
+    New-Item -ItemType Directory -Path $directory -Force | Out-Null
+    Set-Location $directory
 }
 
 function rs {
-    clear
-	& $profile
+    Clear-Host
+    & $profile
 }
 
 # Start fastfetch
 fastfetch
 
-# Start NODE JS
-fnm env --use-on-cd --shell power-shell | Out-String | Invoke-Expression
+# Node.js via fnm
+fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression
+
+# WinGet command-not-found
+Import-Module -Name Microsoft.WinGet.CommandNotFound
 
 Write-Host "░█░█░█▀█░█▀█░█▀█░█░█░░░█▀▀░█▀█░█▀▄░▀█▀░█▀█░█▀▀" -ForegroundColor Yellow
 Write-Host "░█▀█░█▀█░█▀▀░█▀▀░░█░░░░█░░░█░█░█░█░░█░░█░█░█░█" -ForegroundColor Yellow
 Write-Host "░▀░▀░▀░▀░▀░░░▀░░░░▀░░░░▀▀▀░▀▀▀░▀▀░░▀▀▀░▀░▀░▀▀▀" -ForegroundColor Yellow
 Write-Host
+
