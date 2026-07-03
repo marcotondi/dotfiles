@@ -5,8 +5,8 @@ Personal Windows dotfiles — Neovim, Git, PowerShell, and fastfetch configurati
 ## Quick Start
 
 ```powershell
-git clone https://github.com/marcotondi/dotfiles.git ~/.dotfile
-cd ~/.dotfile
+git clone https://github.com/marcotondi/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
 .\init.ps1
 ```
 
@@ -19,10 +19,10 @@ Restart your terminal to pick up the new profile.
 | `init.ps1` | Bootstrap — installs modules and creates symlinks (idempotent) |
 | `uninstall.ps1` | Removes all symlinks created by `init.ps1` |
 | `modules/` | Modular setup scripts (powershell, git, nvim, fastfetch) |
-| `windows/` | `app.json` (winget export), `winget.ps1` (import + optional debloat), `debloat.ps1` (remove bloatware) |
-| `powershell/` | PowerShell profile + oh-my-posh themes |
+| `windows/` | `configuration.winget` (DSC v3 — settings + tools), `winget.ps1` (configure + import), `debloat.ps1` (bloatware removal) |
+| `powershell/` | Modular profile (`coreutils.ps1` + 7 personal modules) + oh-my-posh themes |
 | `nvim/init.lua` | Neovim config (lazy.nvim, LSP, cmp, treesitter) |
-| `.gitconfig` | Git aliases, editor, diff/merge tooling |
+| `git/` | `.gitconfig` — aliases, editor, diff/merge tooling |
 | `fastfetch/` | System info display config |
 
 ## Uninstall
