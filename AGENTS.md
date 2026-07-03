@@ -6,9 +6,11 @@
 ## Deployment Model
 - `init.ps1` creates **symbolic links** from standard Windows config paths into this repo.
   - PowerShell profile → `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`
+  - `coreutils.ps1` → `~/Documents/PowerShell/coreutils.ps1`
+  - Personal modules → `~/Documents/PowerShell/Modules/*.ps1` (7 files)
   - oh-my-posh themes → `~/Documents/PowerShell/`
-  - `.gitconfig` → `~/.gitconfig`
-  - `.gitconfig-personal` → `~/.gitconfig-personal` (incluso condizionalmente dal main `.gitconfig`)
+  - `git/.gitconfig` → `~/.gitconfig`
+  - `git/.gitconfig-personal` → `~/.gitconfig-personal` (incluso condizionalmente dal main `.gitconfig`)
   - Neovim `init.lua` → `~/AppData/Local/nvim/init.lua`
   - fastfetch config → `~/AppData/Local/fastfetch/config.jsonc`
 - `init.ps1` delegates to `modules/{powershell,git,nvim,fastfetch}.ps1` — edit those for symlink changes.
