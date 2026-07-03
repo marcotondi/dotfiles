@@ -20,3 +20,15 @@ Write-Step "Symlink: takuya.omp.json" "Cyan"
 
 $null = New-Item -ItemType SymbolicLink -Path $psDir -Name "amro.omp.json" -Value "$DotfilesRoot\powershell\amro.omp.json" -Force
 Write-Step "Symlink: amro.omp.json" "Cyan"
+
+$null = New-Item -ItemType SymbolicLink -Path $psDir -Name "coreutils.ps1" -Value "$DotfilesRoot\powershell\coreutils.ps1" -Force
+Write-Step "Symlink: coreutils.ps1" "Cyan"
+
+$modulesDir = "$DotfilesRoot\powershell\Modules"
+if (Test-Path $modulesDir) {
+    $modules = Get-ChildItem -Path $modulesDir -File
+    foreach ($module in $modules) {
+        $null = New-Item -ItemType SymbolicLink -Path "$psDir\Modules" -Name $module.Name -Value $module.FullName -Force
+        Write-Step "Symlink: Modules\$($module.Name)" "Cyan"
+    }
+}

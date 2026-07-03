@@ -24,6 +24,7 @@ Write-Step "Installing PowerShell modules..." "Yellow"
 Install-ModuleIfMissing "posh-git"
 Install-ModuleIfMissing "PSFzf"
 Install-ModuleIfMissing "Terminal-Icons"
+Install-ModuleIfMissing "Microsoft.WinGet.CommandNotFound"
 Install-ModuleIfMissing "PSWindowsUpdate"
 
 # --- Create Symbolic Links ---
