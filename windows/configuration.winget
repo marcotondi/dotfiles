@@ -275,6 +275,107 @@ resources:
     description: Set PowerShell 7 as default Terminal profile
 
 # =============================================================================
+# Cascadia Code Nerd Font
+# =============================================================================
+- type: Microsoft.DSC.Transitional/PowerShellScript
+  name: InstallCascadiaCodeNF
+  dependsOn:
+    - PowerShell
+  properties:
+    getScript: |
+      $fontsDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
+      $wanted = @('CascadiaCodeNF.ttf', 'CascadiaMonoNF.ttf')
+      $present = $wanted | ForEach-Object { Test-Path (Join-Path $fontsDir $_) }
+      return @{ installed = ($present -notcontains $false) }
+    testScript: |
+      $fontsDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
+      $wanted = @('CascadiaCodeNF.ttf', 'CascadiaMonoNF.ttf')
+      $present = $wanted | ForEach-Object { Test-Path (Join-Path $fontsDir $_) }
+      return ($present -notcontains $false)
+    setScript: |
+      $version  = '2407.24'
+      $wanted   = @('CascadiaCodeNF.ttf', 'CascadiaMonoNF.ttf')
+      $zipUrl   = "https://github.com/microsoft/cascadia-code/releases/download/v$version/CascadiaCode-$version.zip"
+      $workDir  = Join-Path $env:TEMP "CascadiaCode-$version"
+      $zipPath  = Join-Path $workDir 'CascadiaCode.zip'
+      $null = New-Item -ItemType Directory -Path $workDir -Force
+
+      $fontsDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
+      $null = New-Item -ItemType Directory -Path $fontsDir -Force
+
+      Write-Host "Downloading Cascadia Code NF $version ..."
+      $ProgressPreference = 'SilentlyContinue'
+      Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath -UseBasicParsing
+
+      Add-Type -AssemblyName System.IO.Compression.FileSystem
+      Add-Type -AssemblyName System.Drawing
+      $zip = [System.IO.Compression.ZipFile]::OpenRead($zipPath)
+
+      try {
+        foreach ($name in $wanted) {
+          $entry = $zip.Entries | Where-Object { $_.Name -eq $name } | Select-Object -First 1
+          if (-not $entry) { Write-Warning "Not found in archive: $name"; continue }
+          $dest = Join-Path $fontsDir $name
+          Write-Host "  Installing $name"
+          [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $dest, $true)
+          $pfc = New-Object System.Drawing.Text.PrivateFontCollection
+          try { $pfc.AddFontFile($dest); $family = $pfc.Families[0].Name }
+          finally { $pfc.Dispose() }
+          $regPath = 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts'
+          New-ItemProperty -Path $regPath -Name "$family (TrueType)" -Value $dest -PropertyType String -Force | Out-Null
+        }
+      }
+      finally { $zip.Dispose() }
+      Remove-Item $zipPath -Force
+      Write-Host "Done. Restart terminal to pick up the new fonts."
+  metadata:
+    description: Install Cascadia Code Nerd Fonts
+
+- type: Microsoft.DSC.Transitional/PowerShellScript
+  name: SetCascadiaMonoNF
+  dependsOn:
+    - Terminal
+    - InstallCascadiaCodeNF
+  properties:
+    getScript: |
+      $settingsPath = @(
+          "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_*\LocalState\settings.json"
+          "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+      ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+      if (-not $settingsPath) { return @{ fontFace = $null } }
+      $raw = Get-Content $settingsPath -Raw -EA SilentlyContinue
+      if (-not $raw) { return @{ fontFace = $null } }
+      $json = $raw | ConvertFrom-Json -EA SilentlyContinue
+      return @{ fontFace = $json.profiles.defaults.font.face }
+    testScript: |
+      $settingsPath = @(
+          "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_*\LocalState\settings.json"
+          "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+      ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+      if (-not $settingsPath) { return $true }
+      $raw = Get-Content $settingsPath -Raw -EA SilentlyContinue
+      if (-not $raw) { return $true }
+      $json = $raw | ConvertFrom-Json -EA SilentlyContinue
+      return ($json.profiles.defaults.font.face -eq 'Cascadia Mono NF')
+    setScript: |
+      $fontFace = 'Cascadia Mono NF'
+      $settingsPath = @(
+          "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_*\LocalState\settings.json"
+          "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+      ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+      if (-not $settingsPath) { throw 'Terminal settings.json not found.' }
+      $raw = Get-Content $settingsPath -Raw -Encoding utf8
+      $json = $raw | ConvertFrom-Json -AsHashtable
+      if (-not $json.profiles)               { $json.profiles = [ordered]@{} }
+      if (-not $json.profiles.defaults)      { $json.profiles.defaults = [ordered]@{} }
+      if (-not $json.profiles.defaults.font) { $json.profiles.defaults.font = [ordered]@{} }
+      $json.profiles.defaults.font.face = $fontFace
+      $json | ConvertTo-Json -Depth 32 | Set-Content $settingsPath -Encoding utf8
+      Write-Host "Set Terminal default font to $fontFace"
+  metadata:
+    description: Set Cascadia Mono NF as default Terminal font
+
+# =============================================================================
 # Dev Tools (essenziali per i dotfiles)
 # =============================================================================
 - type: Microsoft.WinGet/Package
@@ -360,6 +461,17 @@ resources:
     installMode: silent
   metadata:
     description: Install fzf
+
+- type: Microsoft.WinGet/Package
+  name: UV
+  properties:
+    id: astral-sh.uv
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install uv (Python package manager)
+    securityContext: elevated
 
 - type: Microsoft.WinGet/Package
   name: VSCode
