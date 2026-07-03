@@ -34,9 +34,10 @@
 - Expects `amro.omp.json` in the same directory for oh-my-posh.
 - Runs `fastfetch` on every shell start.
 - Loads `fnm` for Node.js version management (`--shell powershell` flag).
-- `winget.ps1` is a one-shot package installer (not idempotent).
+- `winget.ps1` runs `winget configure` (settings + essential tools) then `winget import` (bulk apps).
+- `windows/configuration.winget` — DSC v3 config: Windows settings (dark theme, dev mode, Explorer) + essential dev tools (PowerShell 7, Terminal, Neovim, Git, OhMyPosh, etc.).
 - `windows/debloat.ps1` removes Windows bloatware (also one-shot).
 
 ## Structure
 - `modules/` — standalone `.ps1` scripts called by `init.ps1`
-- `windows/` — `winget.ps1` (install packages) and `debloat.ps1` (remove bloatware)
+- `windows/` — `configuration.winget` (settings + dev tools), `winget.ps1` (install packages), `debloat.ps1` (bloatware)

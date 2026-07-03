@@ -1,0 +1,382 @@
+# Dotfiles Windows Configuration
+# Apply with: winget configure -f configuration.winget --accept-configuration-agreements --disable-interactivity
+# Or run through init.ps1 for the full dotfiles bootstrap.
+
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  winget:
+    processor:
+      identifier: dscv3
+resources:
+
+# =============================================================================
+# Developer Mode
+# =============================================================================
+- type: Microsoft.Windows/Registry
+  name: DeveloperMode
+  properties:
+    keyPath: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock
+    valueName: AllowDevelopmentWithoutDevLicense
+    valueData:
+      DWord: 1
+  metadata:
+    description: Enable Developer Mode
+    securityContext: elevated
+
+# =============================================================================
+# Long path support
+# =============================================================================
+- type: Microsoft.Windows/Registry
+  name: LongPaths
+  properties:
+    keyPath: HKLM\SYSTEM\CurrentControlSet\Control\FileSystem
+    valueName: LongPathsEnabled
+    valueData:
+      DWord: 1
+  metadata:
+    description: Enable Win32 long path support
+    securityContext: elevated
+
+# =============================================================================
+# Dark Theme
+# =============================================================================
+- type: Microsoft.DSC.Transitional/PowerShellScript
+  name: DarkTheme
+  properties:
+    getScript: |
+      $regPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+      $apps   = Get-ItemPropertyValue $regPath -Name AppsUseLightTheme -EA SilentlyContinue
+      $system = Get-ItemPropertyValue $regPath -Name SystemUsesLightTheme -EA SilentlyContinue
+      return @{ AppsUseLightTheme = [int]$apps; SystemUsesLightTheme = [int]$system }
+    testScript: |
+      $regPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+      $apps   = Get-ItemPropertyValue $regPath -Name AppsUseLightTheme -EA SilentlyContinue
+      $system = Get-ItemPropertyValue $regPath -Name SystemUsesLightTheme -EA SilentlyContinue
+      return ($apps -eq 0 -and $system -eq 0)
+    setScript: |
+      $regPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+      Set-ItemProperty -Path $regPath -Name AppsUseLightTheme -Value 0
+      Set-ItemProperty -Path $regPath -Name SystemUsesLightTheme -Value 0
+  metadata:
+    description: Set dark theme
+
+# =============================================================================
+# Sudo (inline mode)
+# =============================================================================
+- type: Microsoft.Windows/Registry
+  name: Sudo
+  properties:
+    keyPath: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Sudo
+    valueName: Enabled
+    valueData:
+      DWord: 3
+  metadata:
+    description: Enable Sudo in inline mode
+    securityContext: elevated
+
+# =============================================================================
+# File Explorer
+# =============================================================================
+- type: Microsoft.Windows/Registry
+  name: ShowFileExtensions
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: HideFileExt
+    valueData:
+      DWord: 0
+  metadata:
+    description: Show file extensions
+    securityContext: elevated
+
+- type: Microsoft.Windows/Registry
+  name: ShowHiddenFiles
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: Hidden
+    valueData:
+      DWord: 1
+  metadata:
+    description: Show hidden files
+    securityContext: elevated
+
+- type: Microsoft.Windows/Registry
+  name: OpenThisPC
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: LaunchTo
+    valueData:
+      DWord: 1
+  metadata:
+    description: Open File Explorer to This PC
+    securityContext: elevated
+
+- type: Microsoft.Windows/Registry
+  name: FullPathTitlebar
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: FullPathAddress
+    valueData:
+      DWord: 1
+  metadata:
+    description: Show full path in titlebar
+    securityContext: elevated
+
+- type: Microsoft.Windows/Registry
+  name: FrequentFolders
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: ShowFrequent
+    valueData:
+      DWord: 0
+  metadata:
+    description: Disable frequent folders in Quick Access
+    securityContext: elevated
+
+- type: Microsoft.Windows/Registry
+  name: RecentFiles
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer
+    valueName: ShowRecent
+    valueData:
+      DWord: 0
+  metadata:
+    description: Disable recent files in Quick Access
+    securityContext: elevated
+
+# =============================================================================
+# Taskbar
+# =============================================================================
+- type: Microsoft.Windows/Registry
+  name: HideWidgets
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: TaskbarDa
+    valueData:
+      DWord: 0
+  metadata:
+    description: Hide Widgets button
+    securityContext: elevated
+
+- type: Microsoft.Windows/Registry
+  name: EndTask
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: TaskbarEndTask
+    valueData:
+      DWord: 1
+  metadata:
+    description: Enable End Task on right-click
+    securityContext: elevated
+
+# =============================================================================
+# Start & Search
+# =============================================================================
+- type: Microsoft.Windows/Registry
+  name: WebSearchOff
+  properties:
+    keyPath: HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer
+    valueName: DisableSearchBoxSuggestions
+    valueData:
+      DWord: 1
+  metadata:
+    description: Disable web search in Start
+    securityContext: elevated
+
+- type: Microsoft.Windows/Registry
+  name: StartRecommendations
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    valueName: Start_IrisRecommendations
+    valueData:
+      DWord: 0
+  metadata:
+    description: Disable Start recommendations
+    securityContext: elevated
+
+# =============================================================================
+# Notifications
+# =============================================================================
+- type: Microsoft.Windows/Registry
+  name: DoNotDisturb
+  properties:
+    keyPath: HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings
+    valueName: NOC_GLOBAL_SETTING_TOASTS_ENABLED
+    valueData:
+      DWord: 0
+  metadata:
+    description: Enable Do Not Disturb
+    securityContext: elevated
+
+# =============================================================================
+# PowerShell 7 + Windows Terminal
+# =============================================================================
+- type: Microsoft.WinGet/Package
+  name: PowerShell
+  properties:
+    id: Microsoft.PowerShell
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install PowerShell 7
+
+- type: Microsoft.WinGet/Package
+  name: Terminal
+  properties:
+    id: Microsoft.WindowsTerminal
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install Windows Terminal
+
+- type: Microsoft.DSC.Transitional/PowerShellScript
+  name: Ps7DefaultProfile
+  dependsOn:
+    - PowerShell
+    - Terminal
+  properties:
+    getScript: |
+      $settingsPath = @(
+          "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_*\LocalState\settings.json"
+          "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+      ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+      if (-not $settingsPath) { return @{ defaultProfile = $null } }
+      $raw = Get-Content $settingsPath -Raw -EA SilentlyContinue
+      if (-not $raw) { return @{ defaultProfile = $null } }
+      $json = $raw | ConvertFrom-Json -EA SilentlyContinue
+      $ps7 = $json.profiles.list | Where-Object { $_.source -eq 'Windows.Terminal.PowershellCore' } | Select-Object -First 1
+      return @{ defaultProfile = $json.defaultProfile; ps7Guid = $ps7.guid }
+    testScript: |
+      $settingsPath = @(
+          "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_*\LocalState\settings.json"
+          "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+      ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+      if (-not $settingsPath) { return $true }
+      $raw = Get-Content $settingsPath -Raw -EA SilentlyContinue
+      if (-not $raw) { return $true }
+      $json = $raw | ConvertFrom-Json -EA SilentlyContinue
+      $ps7 = $json.profiles.list | Where-Object { $_.source -eq 'Windows.Terminal.PowershellCore' } | Select-Object -First 1
+      return ($ps7 -and $json.defaultProfile -eq $ps7.guid)
+    setScript: |
+      $settingsPath = @(
+          "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_*\LocalState\settings.json"
+          "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+      ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+      if (-not $settingsPath) { return }
+      $raw = Get-Content $settingsPath -Raw -Encoding utf8
+      $json = $raw | ConvertFrom-Json
+      $ps7 = $json.profiles.list | Where-Object { $_.source -eq 'Windows.Terminal.PowershellCore' } | Select-Object -First 1
+      if ($ps7 -and $json.defaultProfile -ne $ps7.guid) {
+        $json.defaultProfile = $ps7.guid
+        $json | ConvertTo-Json -Depth 32 | Set-Content $settingsPath -Encoding utf8
+      }
+  metadata:
+    description: Set PowerShell 7 as default Terminal profile
+
+# =============================================================================
+# Dev Tools (essenziali per i dotfiles)
+# =============================================================================
+- type: Microsoft.WinGet/Package
+  name: Git
+  properties:
+    id: Git.Git
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install Git
+    securityContext: elevated
+
+- type: Microsoft.WinGet/Package
+  name: GitHubCLI
+  dependsOn:
+    - Git
+  properties:
+    id: GitHub.Cli
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install GitHub CLI
+    securityContext: elevated
+
+- type: Microsoft.WinGet/Package
+  name: Neovim
+  properties:
+    id: Neovim.Neovim
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install Neovim
+
+- type: Microsoft.WinGet/Package
+  name: OhMyPosh
+  properties:
+    id: JanDeDobbeleer.OhMyPosh
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install Oh My Posh
+
+- type: Microsoft.WinGet/Package
+  name: Fastfetch
+  properties:
+    id: Fastfetch-cli.Fastfetch
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install Fastfetch
+
+- type: Microsoft.WinGet/Package
+  name: Fnm
+  properties:
+    id: Schniz.fnm
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install fnm (Node.js version manager)
+
+- type: Microsoft.WinGet/Package
+  name: Bat
+  properties:
+    id: sharkdp.bat
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install bat
+
+- type: Microsoft.WinGet/Package
+  name: Fzf
+  properties:
+    id: junegunn.fzf
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install fzf
+
+- type: Microsoft.WinGet/Package
+  name: VSCode
+  properties:
+    id: Microsoft.VisualStudioCode
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install VS Code
+
+- type: Microsoft.WinGet/Package
+  name: PowerToys
+  properties:
+    id: Microsoft.PowerToys
+    source: winget
+    useLatest: true
+    installMode: silent
+  metadata:
+    description: Install PowerToys

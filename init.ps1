@@ -27,6 +27,21 @@ Install-ModuleIfMissing "Terminal-Icons"
 Install-ModuleIfMissing "Microsoft.WinGet.CommandNotFound"
 Install-ModuleIfMissing "PSWindowsUpdate"
 
+# --- Windows Configuration (winget configure) ---
+$configFile = "$dotfilesRoot\windows\configuration.winget"
+if (Test-Path $configFile) {
+    $response = Read-Host ">>> Applicare configurazione Windows (tema scuro, esplora file, dev tools)? (y/N)"
+    if ($response -eq 'y' -or $response -eq 'Y') {
+        Write-Step "Eseguo winget configure..." "Yellow"
+        winget configure -f $configFile --accept-configuration-agreements --disable-interactivity
+        if ($LASTEXITCODE -eq 3010 -or $LASTEXITCODE -eq 1641) {
+            Write-Step "Riavvio necessario per completare la configurazione." "Magenta"
+        }
+    }
+} else {
+    Write-Step "Configurazione Windows non trovata (windows\configuration.winget), salto." "Magenta"
+}
+
 # --- Create Symbolic Links ---
 Write-Step "Creating symbolic links..." "Yellow"
 
